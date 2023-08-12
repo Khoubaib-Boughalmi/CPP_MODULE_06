@@ -2,10 +2,12 @@
 #define SCALARCONVERTER_H
 
 #include <iostream>
+#include <cstdlib> 
 #include <cerrno>
 
 # define RED "\033[31m"
 #define GREEN "\033[32m"
+#define RESET "\033[0m"
 
 enum scalarTypes {
     CHAR_TYPE,
@@ -14,6 +16,7 @@ enum scalarTypes {
     DOUBLE_TYPE,
     NO_TYPE
 };
+
 class ScalarConverter
 {
     private:
@@ -26,7 +29,5 @@ class ScalarConverter
                 const char *what() const throw();
         };
 };
-
-
 
 #endif

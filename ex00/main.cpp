@@ -1,12 +1,7 @@
 #include "ScalarConverter.h"
 
-class ErrorExeption: public std::exception {
-    public:
-        const char *what() const throw();
-};
-
-const char *ErrorExeption::what() const throw() {
-    return "ErrorExeption";
+const char *ScalarConverter::ErrorExeption::what() const throw() {
+    return "impossible";
 }
 
 int isDigits(std::string input) {
@@ -69,7 +64,7 @@ int detectDouble(std::string input)
         return (1);
     return (0);}
 
-int detectScalarType(std::string input)
+scalarTypes detectScalarType(std::string input)
 {
     if(detectChar(input))
         return CHAR_TYPE;
@@ -80,11 +75,21 @@ int detectScalarType(std::string input)
     else if(detectFloat(input))
         return FLOAT_TYPE;
     else return NO_TYPE;
-    return (0);
 }
 
 void convertChar(std::string input) {
-    std::cout << "Char formal: " << GREEN << "'" << input << "'" << std::endl;
+    char *ptr;
+
+    errno = 0;
+    long result;
+    result = std::strtol(input.c_str(), &ptr, 10);
+    if(errno == ERANGE)
+        throw ScalarConverter::ErrorExeption();
+    if(result > 0 && result <= 127)
+        std::cout << "Char: " << GREEN << "'" << static_cast<char>(result) << "'" << RESET << std::endl;
+    else
+        throw ScalarConverter::ErrorExeption();
+
 }
 void convertDecimal(std::string input) {
     char *ptr;
@@ -93,12 +98,44 @@ void convertDecimal(std::string input) {
     long result;
     result = std::strtol(input.c_str(), &ptr, 10);
     if(errno == ERANGE)
-        throw ErrorExeption();
-    std::cout << "Decimal formal: " << GREEN << result << std::endl;
+        throw ScalarConverter::ErrorExeption();
+    std::cout << "Decimal: " << GREEN << result << RESET << std::endl;
 }
 
-void convertFloat(std::string input) {(void)input;}
-void convertDouble(std::string input) {(void)input;}
+void convertFloat(std::string input) {
+    char *ptr;
+
+    errno = 0;
+    float result;
+    result = std::strtof(input.c_str(), &ptr);
+    if(errno == ERANGE)
+        throw ScalarConverter::ErrorExeption();
+    std::cout << "Float: " << GREEN << result << "f" << RESET << std::endl;
+}
+void convertDouble(std::string input) {
+    char *ptr;
+
+    errno = 0;
+    double result;
+    result = std::strtod(input.c_str(), &ptr);
+    if(errno == ERANGE)
+        throw ScalarConverter::ErrorExeption();
+    std::cout << "Double: " << GREEN << result << std::endl;
+
+}
+
+void displayConversion(scalarTypes scalarType, std::string input) {
+    if(scalarType == NO_TYPE)
+        std::cout << RED << "impossible" << std::endl;
+    else
+    {
+        try{ convertChar(input); } catch(const std::exception& e){ std::cout << "Char: " <<  RED << e.what() << RESET << std::endl;}
+        try{ convertDecimal(input); } catch(const std::exception& e){ std::cout << "Decimal: " << RED <<  e.what() << RESET << std::endl;}
+        try{ convertFloat(input); } catch(const std::exception& e){ std::cout << "Float: " <<  RED << e.what() << RESET << std::endl;}
+        try{ convertDouble(input); } catch(const std::exception& e){ std::cout << "Double: " <<  RED << e.what() << RESET << std::endl;}
+    }
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -108,31 +145,8 @@ int main(int argc, char *argv[])
         std::cout << RED << "Invalid arguments" << std::endl;
         return (1);
     }
-    int scalarType = detectScalarType(static_cast<std::string>(argv[1]));
-    try
-    {
-        switch (scalarType)
-        {
-            case CHAR_TYPE:
-                convertChar(argv[1]);
-                break;
-            case DECIMAL_TYPE:
-                convertDecimal(argv[1]);
-                break;
-            case FLOAT_TYPE:
-                convertFloat(argv[1]);
-                break;
-            case DOUBLE_TYPE:
-                convertDouble(argv[1]);
-                break;
-            case NO_TYPE:
-            std::cout << RED << "impossible" << std::endl;
-        }
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
-    }
+    scalarTypes scalarType = detectScalarType(static_cast<std::string>(argv[1]));
+        displayConversion(scalarType, argv[1]);
   
     return (0);
 }
