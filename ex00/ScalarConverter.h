@@ -23,6 +23,8 @@ class ScalarConverter
 {
     private:
         ScalarConverter();
+        ScalarConverter(const ScalarConverter& other);
+        const ScalarConverter& operator=(const ScalarConverter& other);
     public:
         static void convert(std::string value);
         ~ScalarConverter();
