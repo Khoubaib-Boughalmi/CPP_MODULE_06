@@ -87,7 +87,7 @@ void convertChar(std::string input) {
         throw ScalarConverter::ErrorExeption();
     if(result > 31 && result <= 127)
         std::cout << "Char: " << GREEN << "'" << static_cast<char>(result) << "'" << RESET << std::endl;
-    else if(result > 0 && result <= 31)
+    else if(result >= 0 && result <= 31)
         std::cout << "Char: " << RED << "Non displayable" << RESET << std::endl;
     else
         throw ScalarConverter::ErrorExeption();
@@ -112,8 +112,12 @@ void convertFloat(std::string input) {
     result = std::strtof(input.c_str(), &ptr);
     if(errno == ERANGE)
         throw ScalarConverter::ErrorExeption();
-    std::cout << "Float: " << GREEN << result << "f" << RESET << std::endl;
+    if(result - static_cast<int>(result) == 0)
+        std::cout << "Float: " << GREEN << result << ".0f" << RESET << std::endl;
+    else
+        std::cout << "Float: " << GREEN << result << "f" << RESET << std::endl;
 }
+
 void convertDouble(std::string input) {
     char *ptr;
 
@@ -122,13 +126,20 @@ void convertDouble(std::string input) {
     result = std::strtod(input.c_str(), &ptr);
     if(errno == ERANGE)
         throw ScalarConverter::ErrorExeption();
-    std::cout << "Double: " << GREEN << result << std::endl;
-
+    if(result - static_cast<int>(result) == 0)
+        std::cout << "Double: " << GREEN << result << ".0" << RESET << std::endl;
+    else
+        std::cout << "Double: " << GREEN << result << RESET << std::endl;
 }
 
 void displayConversion(scalarTypes scalarType, std::string input) {
     if(scalarType == NO_TYPE)
-        std::cout << RED << "impossible" << std::endl;
+    {
+        std::cout << "Char: " << RED << "impossible" << RESET <<std::endl;
+        std::cout << "Decimal: " << RED << "impossible" << RESET <<std::endl;
+        std::cout << "Float: " << RED << "nanf" << RESET <<std::endl;
+        std::cout << "Double: " << RED << "nan" << RESET <<std::endl;
+    }
     else
     {
         try{ convertChar(input); } catch(const std::exception& e){ std::cout << "Char: " <<  RED << e.what() << RESET << std::endl;}
@@ -148,6 +159,5 @@ int main(int argc, char *argv[])
     }
     scalarTypes scalarType = detectScalarType(static_cast<std::string>(argv[1]));
     displayConversion(scalarType, argv[1]);
-  
     return (0);
 }
