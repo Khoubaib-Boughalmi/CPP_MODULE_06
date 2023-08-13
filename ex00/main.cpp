@@ -85,8 +85,10 @@ void convertChar(std::string input) {
     result = std::strtol(input.c_str(), &ptr, 10);
     if(errno == ERANGE)
         throw ScalarConverter::ErrorExeption();
-    if(result > 0 && result <= 127)
+    if(result > 31 && result <= 127)
         std::cout << "Char: " << GREEN << "'" << static_cast<char>(result) << "'" << RESET << std::endl;
+    else if(result > 0 && result <= 31)
+        std::cout << "Char: " << RED << "Non displayable" << RESET << std::endl;
     else
         throw ScalarConverter::ErrorExeption();
 
@@ -136,7 +138,6 @@ void displayConversion(scalarTypes scalarType, std::string input) {
     }
 }
 
-
 int main(int argc, char *argv[])
 {
     (void)argv;
@@ -146,7 +147,7 @@ int main(int argc, char *argv[])
         return (1);
     }
     scalarTypes scalarType = detectScalarType(static_cast<std::string>(argv[1]));
-        displayConversion(scalarType, argv[1]);
+    displayConversion(scalarType, argv[1]);
   
     return (0);
 }
