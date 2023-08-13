@@ -62,11 +62,30 @@ int detectDouble(std::string input)
         i++;
     if(!input[i])
         return (1);
-    return (0);}
+    return (0);
+}
+
+int detectPlusInf(std::string input)
+{
+    if(input == "+inf" || input == "+inff")
+        return (1);
+    return (0);
+}
+
+int detectMinusInf(std::string input)
+{
+    if(input == "-inf" || input == "-inff")
+        return (1);
+    return (0);
+}
 
 scalarTypes detectScalarType(std::string input)
 {
-    if(detectChar(input))
+    if(detectPlusInf(input))
+        return PINF_TYPE;
+    if(detectMinusInf(input))
+        return MINF_TYPE;
+    else if(detectChar(input))
         return CHAR_TYPE;
     else if(detectDecimal(input))
         return DECIMAL_TYPE;
@@ -133,7 +152,24 @@ void convertDouble(std::string input) {
 }
 
 void displayConversion(scalarTypes scalarType, std::string input) {
-    if(scalarType == NO_TYPE)
+    if(scalarType == PINF_TYPE || scalarType == MINF_TYPE)
+    {
+        if(scalarType == PINF_TYPE)        
+        {
+            std::cout << "Char: " << RED << "impossible" << RESET <<std::endl;
+            std::cout << "Decimal: " << RED << "impossible" << RESET <<std::endl;
+            std::cout << "Float: " << RED << "+inff" << RESET <<std::endl;
+            std::cout << "Double: " << RED << "+inf" << RESET <<std::endl;
+        }
+        else
+        {
+            std::cout << "Char: " << RED << "impossible" << RESET <<std::endl;
+            std::cout << "Decimal: " << RED << "impossible" << RESET <<std::endl;
+            std::cout << "Float: " << RED << "-inff" << RESET <<std::endl;
+            std::cout << "Double: " << RED << "-inf" << RESET <<std::endl;
+        }
+    }
+    else if(scalarType == NO_TYPE)
     {
         std::cout << "Char: " << RED << "impossible" << RESET <<std::endl;
         std::cout << "Decimal: " << RED << "impossible" << RESET <<std::endl;

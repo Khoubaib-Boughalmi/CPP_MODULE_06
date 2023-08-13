@@ -14,6 +14,8 @@ enum scalarTypes {
     DECIMAL_TYPE,
     FLOAT_TYPE,
     DOUBLE_TYPE,
+    PINF_TYPE,
+    MINF_TYPE,
     NO_TYPE
 };
 
